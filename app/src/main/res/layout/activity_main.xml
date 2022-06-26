@@ -32,13 +32,15 @@
     </LinearLayout>
 
     <!--recycler view for displaying our list of books-->
+
+    <!--progressbar for displaying our loading indicator-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/idRVBooks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/idLLsearch" />
+        android:layout_below="@id/idLLsearch"
+        android:layout_marginTop="42dp" />
 
-    <!--progressbar for displaying our loading indicator-->
     <ProgressBar
         android:id="@+id/idLoadingPB"
         android:layout_width="wrap_content"

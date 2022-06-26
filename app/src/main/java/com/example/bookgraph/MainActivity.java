@@ -1,6 +1,7 @@
 package com.example.bookgraph;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,12 +18,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -111,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject saleInfoObj = itemsObj.optJSONObject("saleInfo");
                         String buyLink = saleInfoObj.optString("buyLink");
                         ArrayList<String> authorsArrayList = new ArrayList<>();
+
                         if (authorsArray.length() != 0) {
                             for (int j = 0; j < authorsArray.length(); j++) {
                                 authorsArrayList.add(authorsArray.optString(i));

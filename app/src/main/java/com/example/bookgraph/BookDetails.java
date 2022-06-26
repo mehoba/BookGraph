@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BookDetails extends AppCompatActivity {
 
@@ -53,6 +54,11 @@ public class BookDetails extends AppCompatActivity {
         previewLink = getIntent().getStringExtra("previewLink");
         infoLink = getIntent().getStringExtra("infoLink");
         buyLink = getIntent().getStringExtra("buyLink");
+
+        //adding book parameters to Firebase DB
+        HashMap<String, Object> user = new HashMap<>();
+        user.put("title",title);
+        Database.addBook(user);
 
         // after getting the data we are setting
         // that data to our text views and image view.
