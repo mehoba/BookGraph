@@ -14,6 +14,7 @@ public class Book {
     private String previewLink;
     private String infoLink;
     private String buyLink;
+    private String isInFavorites;
 
     public String getTitle() {
         return title;
@@ -103,9 +104,17 @@ public class Book {
         this.buyLink = buyLink;
     }
 
+    public String getInFavorites() {
+        return isInFavorites;
+    }
+
+    public void setInFavorites(String inFavorites) {
+        isInFavorites = inFavorites;
+    }
+
     public Book(String title, String subtitle, ArrayList<String> authors, String publisher,
-                    String publishedDate, String description, int pageCount, String thumbnail,
-                    String previewLink, String infoLink, String buyLink) {
+                String publishedDate, String description, int pageCount, String thumbnail,
+                String previewLink, String infoLink, String buyLink, String isInFavorites) {
         this.title = title;
         this.subtitle = subtitle;
         this.authors = authors;
@@ -117,5 +126,6 @@ public class Book {
         this.previewLink = previewLink;
         this.infoLink = infoLink;
         this.buyLink = buyLink;
+        this.isInFavorites = isInFavorites;
     }
 }

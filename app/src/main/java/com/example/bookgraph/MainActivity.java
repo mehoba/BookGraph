@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,12 +19,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +37,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private EditText searchEdt;
     private ImageButton searchBtn;
-
+    private LinkedList<String> bookFavLinkedList;
+    private static LinkedList<String> retVal=new LinkedList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,16 +101,20 @@ public class MainActivity extends AppCompatActivity {
         // below line we are creating a new request queue.
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
 
-
         // below line is use to make json object request inside that we
         // are passing url, get method and getting json object. .
         JsonObjectRequest booksObjrequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
             @Override
             public void onResponse(JSONObject response) {
+                //sets if the Book is saved in the Favorites of the User
+                boolean isInFavoritesb=false;
                 progressBar.setVisibility(View.GONE);
                 // inside on response method we are extracting all our json data.
                 try {
                     JSONArray itemsArray = response.getJSONArray("items");
+                    bookFavLinkedList=getIsSaved();
+
                     for (int i = 0; i < itemsArray.length(); i++) {
                         JSONObject itemsObj = itemsArray.getJSONObject(i);
                         JSONObject volumeObj = itemsObj.getJSONObject("volumeInfo");
@@ -126,9 +139,23 @@ public class MainActivity extends AppCompatActivity {
                                 authorsArrayList.add(authorsArray.optString(i));
                             }
                         }
+
+                        for(String s:bookFavLinkedList){
+                            if(s.equals(title)){
+                                Log.d("FoundFav", "Book Title "+s+" found in Favorite List");
+                                isInFavoritesb=true;
+                            }else{
+                                Log.d("FoundFav", "Book Title "+s+"  is not the same as: "+title);
+                            }
+                        }
                         // after extracting all the data we are
                         // saving this data in our modal class.
-                        Book bookInfo = new Book(title, subtitle, authorsArrayList, publisher, publishedDate, description, pageCount, thumbnail, previewLink, infoLink, buyLink);
+                        String isInFavorites="false";
+                        if(isInFavoritesb){isInFavorites="true";}
+                        Book bookInfo = new Book(title, subtitle, authorsArrayList, publisher, publishedDate, description, pageCount, thumbnail, previewLink, infoLink, buyLink,isInFavorites);
+
+                        //reset the Boolean for the next loop
+                        isInFavoritesb=false;
 
                         // below line is use to pass our modal
                         // class in our array list.
@@ -165,4 +192,49 @@ public class MainActivity extends AppCompatActivity {
         // request in our request queue.
         queue.add(booksObjrequest);
     }
+
+    public synchronized LinkedList<String> getIsSaved(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Task<QuerySnapshot> getFavorites= db.collection("usersFavorites")
+                .whereEqualTo("uid", uid)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    private static final String TAG = "Query";
+
+                    @Override
+                    public synchronized void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                String bookTitle=document.getString("title");
+
+                                while (bookTitle == null) {
+                                    try {
+                                        wait();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                Log.d(TAG, "Book Title "+bookTitle);
+                                retVal.add(bookTitle);
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+        notifyAll();
+        if(retVal.size()==0){
+            Log.d("retVal", "EMPTY");
+        }
+        for(String s:retVal){
+            Log.d("retVal", "Book in Favorites: "+s);
+        }
+        return retVal;
+    }
+
 }

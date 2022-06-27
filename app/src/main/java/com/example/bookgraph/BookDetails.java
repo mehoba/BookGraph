@@ -31,14 +31,24 @@ import java.util.HashMap;
 public class BookDetails extends AppCompatActivity {
 
     // creating variables for strings,text view, image views and button.
-    String title, subtitle, publisher, publishedDate, description, thumbnail, previewLink, infoLink, buyLink,isSaved;
+    String title;
+    String subtitle;
+    String publisher;
+    String publishedDate;
+    String description;
+    String thumbnail;
+    String previewLink;
+    String infoLink;
+    String buyLink;
+    String isSaved;
     int pageCount;
     private ArrayList<String> authors;
-    static String retVal="";
+    static String retVal;
 
     TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, publishDateTV,isSavedTxt;
     Button previewBtn, buyBtn,saveBtn;
     private ImageView bookIV;
+    boolean setAfterSave=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +79,9 @@ public class BookDetails extends AppCompatActivity {
         previewLink = getIntent().getStringExtra("previewLink");
         infoLink = getIntent().getStringExtra("infoLink");
         buyLink = getIntent().getStringExtra("buyLink");
-        isSaved = getIsSaved();
+        isSaved=getIntent().getStringExtra("isInFavorites");
+        boolean parseBoolean=Boolean.parseBoolean(isSaved);
+
         // after getting the data we are setting
         // that data to our text views and image view.
         titleTV.setText(title);
@@ -79,7 +91,9 @@ public class BookDetails extends AppCompatActivity {
         descTV.setText(description);
         pageTV.setText("No Of Pages : " + pageCount);
         Picasso.get().load(thumbnail).into(bookIV);
-        isSavedTxt.setText(isSaved);
+
+        if(parseBoolean){
+        isSavedTxt.setText("Saved!");}else { isSavedTxt.setText("Not saved!");}
         // adding on click listener for our preview button.
         previewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,11 +142,14 @@ public class BookDetails extends AppCompatActivity {
                 user.put("title",title);
                 book.put("title",title);
                 Database.addBook(user,book);
+
+               // boolean isSavedNow=getIsSaved();
+
             }
         });
     }
 
-    public String getIsSaved(){
+    public boolean getIsSaved(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -150,7 +167,7 @@ public class BookDetails extends AppCompatActivity {
                                 String bookTitle=document.getString("title");
                                 Log.d(TAG, "Book Title "+bookTitle);
                                 if(bookTitle.equals(title)){
-                                    retVal="Saved!";
+                                   setAfterSave=true;
                                 }
                             }
                         } else {
@@ -158,7 +175,6 @@ public class BookDetails extends AppCompatActivity {
                         }
                     }
                 });
-
-        return retVal;
+        return setAfterSave;
     }
 }

@@ -67,7 +67,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                 i.putExtra("previewLink", book.getPreviewLink());
                 i.putExtra("infoLink", book.getInfoLink());
                 i.putExtra("buyLink", book.getBuyLink());
-
+                i.putExtra("isInFavorites",book.getInFavorites());
                 // after passing that data we are
                 // starting our new intent.
                 mcontext.startActivity(i);
