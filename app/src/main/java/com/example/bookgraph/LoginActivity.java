@@ -92,6 +92,7 @@ public class LoginActivity extends AppCompatActivity{
                             Toast.makeText(LoginActivity.this, "Authentication successfull.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(user);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -129,8 +130,9 @@ public class LoginActivity extends AppCompatActivity{
         }*/
 
         if (user != null) {
-            Intent myIntent = new Intent(this,MainActivity.class);
-            startActivity(myIntent);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
         }
     }
 }
