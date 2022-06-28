@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,10 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
@@ -47,6 +45,7 @@ public class BookDetails extends AppCompatActivity {
 
     TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, publishDateTV,isSavedTxt;
     Button previewBtn, buyBtn,saveBtn;
+
     private ImageView bookIV;
     boolean setAfterSave=false;
 
@@ -93,7 +92,7 @@ public class BookDetails extends AppCompatActivity {
         Picasso.get().load(thumbnail).into(bookIV);
 
         if(parseBoolean){
-        isSavedTxt.setText("Saved!");}else { isSavedTxt.setText("Not saved!");}
+        isSavedTxt.setText("Is in your Favorites: Yes");}else { isSavedTxt.setText("Is in your Favorites: No");}
         // adding on click listener for our preview button.
         previewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +142,11 @@ public class BookDetails extends AppCompatActivity {
                 book.put("title",title);
                 Database.addBook(user,book);
 
-               // boolean isSavedNow=getIsSaved();
+                boolean test=getIsSaved();
+                Log.d("TEST","test:"+test);
+                if(test){
+                    isSavedTxt.setText("Is in your Favorites: Yes");
+                }
 
             }
         });

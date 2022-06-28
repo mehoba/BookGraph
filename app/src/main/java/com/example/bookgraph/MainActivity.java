@@ -1,5 +1,6 @@
 package com.example.bookgraph;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton searchBtn;
     private LinkedList<String> bookFavLinkedList;
     private static LinkedList<String> retVal=new LinkedList<>();
+    private ImageButton favBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.idLoadingPB);
         searchEdt = findViewById(R.id.idEdtSearchBooks);
         searchBtn = findViewById(R.id.idBtnSearch);
-
+        favBtn = findViewById(R.id.idFavoritesButton);
         // initializing on click listener for our button.
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +80,15 @@ public class MainActivity extends AppCompatActivity {
                 // calling get book info method to load all
                 // the books from the API.
                 getBooksInfo(searchEdt.getText().toString());
+            }
+        });
+
+        favBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("favBTN","...");
+                Intent i = new Intent(MainActivity.this, Favorites.class);
+                startActivity(i);
             }
         });
     }
