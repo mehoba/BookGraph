@@ -33,12 +33,20 @@ public class LoginActivity extends AppCompatActivity{
       //creatAccount("ajdinmemic99@outlook.com","ajdinmemic123");
 
       Button loginButton = findViewById(R.id.loginButton);
+      Button regisButton = findViewById(R.id.registerButton);
       EditText email= findViewById(R.id.usernameEditText);
       EditText password=findViewById(R.id.passwordEditText);
 
       loginButton.setOnClickListener(new View.OnClickListener() {
           public void onClick(View v) {
              signIn(email.getText().toString(),password.getText().toString());
+          }
+      });
+
+     regisButton.setOnClickListener(new View.OnClickListener() {
+          public void onClick(View v) {
+              if(!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+              creatAccount(email.getText().toString(),password.getText().toString());}
           }
       });
 
@@ -67,6 +75,8 @@ public class LoginActivity extends AppCompatActivity{
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            Toast.makeText(LoginActivity.this, "Registration successfull!",
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -105,30 +115,6 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     private void updateUI(FirebaseUser user) {
-
-     /*   if (user != null) {
-            mBinding.status.setText(getString(R.string.emailpassword_status_fmt,
-                    user.getEmail(), user.isEmailVerified()));
-            mBinding.detail.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-            mBinding.emailPasswordButtons.setVisibility(View.GONE);
-            mBinding.emailPasswordFields.setVisibility(View.GONE);
-            mBinding.signedInButtons.setVisibility(View.VISIBLE);
-
-            if (user.isEmailVerified()) {
-                mBinding.verifyEmailButton.setVisibility(View.GONE);
-            } else {
-                mBinding.verifyEmailButton.setVisibility(View.VISIBLE);
-            }
-        } else {
-            mBinding.status.setText(R.string.signed_out);
-            mBinding.detail.setText(null);
-
-            mBinding.emailPasswordButtons.setVisibility(View.VISIBLE);
-            mBinding.emailPasswordFields.setVisibility(View.VISIBLE);
-            mBinding.signedInButtons.setVisibility(View.GONE);
-        }*/
-
         if (user != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("user", user);
