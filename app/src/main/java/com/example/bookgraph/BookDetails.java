@@ -76,7 +76,7 @@ public class BookDetails extends AppCompatActivity {
         publisherTV.setText(publisher);
         publishDateTV.setText("Published On : " + publishedDate);
         descTV.setText(description);
-        pageTV.setText("No Of Pages : " + pageCount);
+        pageTV.setText("Number of pages : " + pageCount);
         Picasso.get().load(thumbnail).into(bookIV);
 
         if(parseBoolean){

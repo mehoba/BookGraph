@@ -84,20 +84,22 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < itemsArray.length(); i++) {
                     JSONObject itemsObj = itemsArray.getJSONObject(i);
                     JSONObject volumeObj = itemsObj.getJSONObject("volumeInfo");
+                    JSONObject imageLinks = volumeObj.optJSONObject("imageLinks");
+                    JSONObject saleInfoObj = itemsObj.optJSONObject("saleInfo");
+
+                    JSONArray authorsArray = volumeObj.getJSONArray("authors");
+
                     String title = volumeObj.optString("title");
                     String subtitle = volumeObj.optString("subtitle");
-                    JSONArray authorsArray = volumeObj.getJSONArray("authors");
                     String publisher = volumeObj.optString("publisher");
                     String publishedDate = volumeObj.optString("publishedDate");
                     String description = volumeObj.optString("description");
-                    int pageCount = volumeObj.optInt("pageCount");
-                    JSONObject imageLinks = volumeObj.optJSONObject("imageLinks");
                     String thumbnail = imageLinks.optString("thumbnail");
-                    thumbnail = "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png";
+                    thumbnail = thumbnail.substring(0, 4) + 's' + thumbnail.substring(4);
                     String previewLink = volumeObj.optString("previewLink");
                     String infoLink = volumeObj.optString("infoLink");
-                    JSONObject saleInfoObj = itemsObj.optJSONObject("saleInfo");
                     String buyLink = saleInfoObj.optString("buyLink");
+                    int pageCount = volumeObj.optInt("pageCount");
                     ArrayList<String> authorsArrayList = new ArrayList<>();
 
                     if (authorsArray.length() != 0) {
