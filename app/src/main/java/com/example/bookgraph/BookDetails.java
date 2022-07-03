@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +21,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BookDetails extends AppCompatActivity {
-
-    // creating variables for strings,text view, image views and button.
     String title;
     String subtitle;
     String publisher;
@@ -40,13 +35,10 @@ public class BookDetails extends AppCompatActivity {
     String buyLink;
     String isSaved;
     int pageCount;
-    private ArrayList<String> authors;
-    static String retVal;
 
     TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, publishDateTV,isSavedTxt;
     Button previewBtn, buyBtn,saveBtn;
 
-    private ImageView bookIV;
     boolean setAfterSave=false;
 
     @Override
@@ -54,7 +46,6 @@ public class BookDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details);
 
-        // initializing our views..
         titleTV = findViewById(R.id.idTVTitle);
         subtitleTV = findViewById(R.id.idTVSubTitle);
         publisherTV = findViewById(R.id.idTVpublisher);
@@ -64,10 +55,9 @@ public class BookDetails extends AppCompatActivity {
         previewBtn = findViewById(R.id.idBtnPreview);
         saveBtn = findViewById(R.id.idBtnSave);
         buyBtn = findViewById(R.id.idBtnBuy);
-        bookIV = findViewById(R.id.idIVbook);
+        ImageView bookIV = findViewById(R.id.idIVbook);
         isSavedTxt = findViewById(R.id.idIsSaved);
 
-        // getting the data which we have passed from our adapter class.
         title = getIntent().getStringExtra("title");
         subtitle = getIntent().getStringExtra("subtitle");
         publisher = getIntent().getStringExtra("publisher");
@@ -81,8 +71,6 @@ public class BookDetails extends AppCompatActivity {
         isSaved=getIntent().getStringExtra("isInFavorites");
         boolean parseBoolean=Boolean.parseBoolean(isSaved);
 
-        // after getting the data we are setting
-        // that data to our text views and image view.
         titleTV.setText(title);
         subtitleTV.setText(subtitle);
         publisherTV.setText(publisher);
@@ -93,62 +81,43 @@ public class BookDetails extends AppCompatActivity {
 
         if(parseBoolean){
         isSavedTxt.setText("Is in your Favorites: Yes");}else { isSavedTxt.setText("Is in your Favorites: No");}
-        // adding on click listener for our preview button.
-        previewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (previewLink.isEmpty()) {
-                    // below toast message is displayed when preview link is not present.
-                    Toast.makeText(BookDetails.this, "No preview Link present", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                // if the link is present we are opening
-                // that link via an intent.
-                Uri uri = Uri.parse(previewLink);
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(i);
+        previewBtn.setOnClickListener(v -> {
+            if (previewLink.isEmpty()) {
+                Toast.makeText(BookDetails.this, "No preview Link present", Toast.LENGTH_SHORT).show();
+                return;
             }
+            Uri uri = Uri.parse(previewLink);
+            Intent i = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(i);
         });
 
-        // initializing on click listener for buy button.
-        buyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (buyLink.isEmpty()) {
-                    // below toast message is displaying when buy link is empty.
-                    Toast.makeText(BookDetails.this, "No buy page present for this book", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                // if the link is present we are opening
-                // the link via an intent.
-                Uri uri = Uri.parse(buyLink);
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(i);
+        buyBtn.setOnClickListener(v -> {
+            if (buyLink.isEmpty()) {
+                Toast.makeText(BookDetails.this, "No buy page present for this book", Toast.LENGTH_SHORT).show();
+                return;
             }
+            Uri uri = Uri.parse(buyLink);
+            Intent i = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(i);
         });
 
-        //on click save this book in a JSON file
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        saveBtn.setOnClickListener(v -> {
 
-                FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                //adding book parameters to Firebase DB
-                HashMap<String, Object> user = new HashMap<>();
-                HashMap<String, Object> book = new HashMap<>();
+            FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            HashMap<String, Object> user = new HashMap<>();
+            HashMap<String, Object> book = new HashMap<>();
 
-                user.put("uid",fireBaseUser.getUid());
-                user.put("title",title);
-                book.put("title",title);
-                Database.addBook(user,book);
+            user.put("uid",fireBaseUser.getUid());
+            user.put("title",title);
+            book.put("title",title);
+            Database.addBook(user,book);
 
-                boolean test=getIsSaved();
-                Log.d("TEST","test:"+test);
-                if(test){
-                    isSavedTxt.setText("Is in your Favorites: Yes");
-                }
-
+            boolean test=getIsSaved();
+            Log.d("TEST","test:"+test);
+            if(test){
+                isSavedTxt.setText("Is in your Favorites: Yes");
             }
+
         });
     }
 

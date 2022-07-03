@@ -26,8 +26,7 @@ public class Favorites extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites2);
 
-        LinearLayout MainLL= (LinearLayout) findViewById(R.id.myLayoutId);
-
+        LinearLayout MainLL = findViewById(R.id.myLayoutId);
         retVal=getIsSaved();
        for(String s:retVal){
             TextView text = new TextView(this);
