@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,67 +21,50 @@ import java.util.LinkedList;
 
 public class Favorites extends AppCompatActivity {
     static LinkedList<String> retVal = new LinkedList<>();
+    LinearLayout mainLL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites2);
-
-        LinearLayout MainLL = findViewById(R.id.myLayoutId);
-        retVal=getIsSaved();
-       for(String s:retVal){
-            TextView text = new TextView(this);
-            text.setText(s); // <-- does it really compile without the + sign?
-            text.setTextSize(20);
-            text.setGravity(Gravity.LEFT);
-            text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            MainLL.addView(text);
-        }
+        mainLL = findViewById(R.id.myLayoutId);
+        getIsSaved();
     }
 
-    public synchronized LinkedList<String> getIsSaved(){
+    public synchronized void getIsSaved(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Task<QuerySnapshot> getFavorites= db.collection("usersFavorites")
                 .whereEqualTo("uid", uid)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    private static final String TAG = "Query";
+                .get();
+        Toast.makeText(this, "Please wait while list loads", Toast.LENGTH_SHORT)
+                .show();
+        while(!getFavorites.isComplete()){
+            try {
+                wait(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (QueryDocumentSnapshot document : getFavorites.getResult()) {
+            String bookTitle=document.getString("title");
+            if(isAlredy(bookTitle)) {
+                retVal.add(bookTitle);
+            }
+        }
 
-                    @Override
-                    public synchronized void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                String bookTitle=document.getString("title");
-
-                                while (bookTitle == null) {
-                                    try {
-                                        wait();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                Log.d(TAG, "Book Title "+bookTitle);
-                                if(isAlredy(bookTitle)){
-                                retVal.add(bookTitle);}
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-        notifyAll();
         if(retVal.size()==0){
             Log.d("retVal", "EMPTY");
         }
         for(String s:retVal){
-            Log.d("retVal", "Book in Favorites: "+s);
+            TextView text = new TextView(this);
+            text.setText(s);
+            text.setTextSize(20);
+            text.setGravity(Gravity.START);
+            text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            mainLL.addView(text);
         }
-        return retVal;
     }
 
     public boolean isAlredy(String book){
