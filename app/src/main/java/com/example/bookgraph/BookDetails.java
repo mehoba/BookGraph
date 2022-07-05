@@ -116,6 +116,8 @@ public class BookDetails extends AppCompatActivity {
             Log.d("TEST","test:"+test);
             if(test){
                 isSavedTxt.setText("Is in your Favorites: Yes");
+                Toast.makeText(this, title + "saved to favorites", Toast.LENGTH_SHORT)
+                        .show();
             }
 
         });

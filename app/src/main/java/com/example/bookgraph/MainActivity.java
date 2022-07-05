@@ -94,11 +94,20 @@ public class MainActivity extends AppCompatActivity {
                     String publisher = volumeObj.optString("publisher");
                     String publishedDate = volumeObj.optString("publishedDate");
                     String description = volumeObj.optString("description");
-                    String thumbnail = imageLinks.optString("thumbnail");
-                    thumbnail = thumbnail.substring(0, 4) + 's' + thumbnail.substring(4);
+                    String thumbnail = null;
+                    if (imageLinks != null) {
+                        thumbnail = imageLinks.optString("thumbnail");
+                        thumbnail = thumbnail.substring(0, 4) + 's' + thumbnail.substring(4);
+                    }
+                    else {
+                        thumbnail = "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png";
+                    }
                     String previewLink = volumeObj.optString("previewLink");
                     String infoLink = volumeObj.optString("infoLink");
-                    String buyLink = saleInfoObj.optString("buyLink");
+                    String buyLink = null;
+                    if (saleInfoObj != null) {
+                        buyLink = saleInfoObj.optString("buyLink");
+                    }
                     int pageCount = volumeObj.optInt("pageCount");
                     ArrayList<String> authorsArrayList = new ArrayList<>();
 
@@ -111,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
                     for(String s:bookFavLinkedList){
                         if(s.equals(title)){
                             Log.d("FoundFav", "Book Title "+s+" found in Favorite List");
+                            Toast.makeText(this, "Book is already in favorites", Toast.LENGTH_SHORT)
+                                    .show();
                             isInFavoritesb=true;
                         }else{
                             Log.d("FoundFav", "Book Title "+s+"  is not the same as: "+title);
