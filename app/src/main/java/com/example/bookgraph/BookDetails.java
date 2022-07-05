@@ -34,9 +34,10 @@ public class BookDetails extends AppCompatActivity {
     String infoLink;
     String buyLink;
     String isSaved;
+    String category;
     int pageCount;
 
-    TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, publishDateTV,isSavedTxt;
+    TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, categoryTV, publishDateTV,isSavedTxt;
     Button previewBtn, buyBtn,saveBtn;
 
     boolean setAfterSave=false;
@@ -49,6 +50,7 @@ public class BookDetails extends AppCompatActivity {
         titleTV = findViewById(R.id.idTVTitle);
         subtitleTV = findViewById(R.id.idTVSubTitle);
         publisherTV = findViewById(R.id.idTVpublisher);
+        categoryTV = findViewById(R.id.idIVCategory);
         descTV = findViewById(R.id.idTVDescription);
         pageTV = findViewById(R.id.idTVNoOfPages);
         publishDateTV = findViewById(R.id.idTVPublishDate);
@@ -61,6 +63,7 @@ public class BookDetails extends AppCompatActivity {
         title = getIntent().getStringExtra("title");
         subtitle = getIntent().getStringExtra("subtitle");
         publisher = getIntent().getStringExtra("publisher");
+        category = getIntent().getStringExtra("category");
         publishedDate = getIntent().getStringExtra("publishedDate");
         description = getIntent().getStringExtra("description");
         pageCount = getIntent().getIntExtra("pageCount", 0);
@@ -77,6 +80,7 @@ public class BookDetails extends AppCompatActivity {
         publishDateTV.setText("Published On : " + publishedDate);
         descTV.setText(description);
         pageTV.setText("Number of pages : " + pageCount);
+        categoryTV.setText("Category : " + category);
         Picasso.get().load(thumbnail).into(bookIV);
 
         if(parseBoolean){

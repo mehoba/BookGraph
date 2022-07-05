@@ -89,12 +89,20 @@ public class MainActivity extends AppCompatActivity {
 
                     JSONArray authorsArray = volumeObj.getJSONArray("authors");
 
+                    String category;
+                    try{
+                     category = volumeObj.getJSONArray("categories").getString(0);
+                    }
+                    catch (Exception e)
+                    {
+                        category = "No category found";
+                    }
                     String title = volumeObj.optString("title");
                     String subtitle = volumeObj.optString("subtitle");
                     String publisher = volumeObj.optString("publisher");
                     String publishedDate = volumeObj.optString("publishedDate");
                     String description = volumeObj.optString("description");
-                    String thumbnail = null;
+                    String thumbnail;
                     if (imageLinks != null) {
                         thumbnail = imageLinks.optString("thumbnail");
                         thumbnail = thumbnail.substring(0, 4) + 's' + thumbnail.substring(4);
@@ -117,19 +125,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    for(String s:bookFavLinkedList){
-                        if(s.equals(title)){
-                            Log.d("FoundFav", "Book Title "+s+" found in Favorite List");
-                            Toast.makeText(this, "Book is already in favorites", Toast.LENGTH_SHORT)
-                                    .show();
-                            isInFavoritesb=true;
-                        }else{
-                            Log.d("FoundFav", "Book Title "+s+"  is not the same as: "+title);
-                        }
+                    if(bookFavLinkedList.contains(title)) {
+                        Log.d("FoundFav", "Book Title "+title+" found in Favorite List");
+                        Toast.makeText(this, "Book is already in favorites", Toast.LENGTH_SHORT)
+                                .show();
+                        isInFavoritesb=true;
                     }
+
                     String isInFavorites="false";
                     if(isInFavoritesb){isInFavorites="true";}
-                    Book bookInfo = new Book(title, subtitle, authorsArrayList, publisher, publishedDate, description, pageCount, thumbnail, previewLink, infoLink, buyLink,isInFavorites);
+                    Book bookInfo = new Book(title, subtitle, authorsArrayList, publisher, publishedDate, description, pageCount, thumbnail, previewLink, infoLink, buyLink,isInFavorites, category);
                     isInFavoritesb=false;
 
                     bookInfoArrayList.add(bookInfo);

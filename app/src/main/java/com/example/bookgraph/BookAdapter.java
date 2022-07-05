@@ -48,6 +48,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             i.putExtra("subtitle", book.getSubtitle());
             i.putExtra("authors", book.getAuthors());
             i.putExtra("publisher", book.getPublisher());
+            i.putExtra("category", book.getCategory());
             i.putExtra("publishedDate", book.getPublishedDate());
             i.putExtra("description", book.getDescription());
             i.putExtra("pageCount", book.getPageCount());

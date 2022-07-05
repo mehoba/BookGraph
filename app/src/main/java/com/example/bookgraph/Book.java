@@ -15,6 +15,7 @@ public class Book {
     private String infoLink;
     private String buyLink;
     private String isInFavorites;
+    private String category;
 
     public String getTitle() {
         return title;
@@ -112,9 +113,13 @@ public class Book {
         isInFavorites = inFavorites;
     }
 
+    public String getCategory() { return category; }
+
+    public void setCategory(String category) { this.category = category; }
+
     public Book(String title, String subtitle, ArrayList<String> authors, String publisher,
                 String publishedDate, String description, int pageCount, String thumbnail,
-                String previewLink, String infoLink, String buyLink, String isInFavorites) {
+                String previewLink, String infoLink, String buyLink, String isInFavorites, String category) {
         this.title = title;
         this.subtitle = subtitle;
         this.authors = authors;
@@ -127,5 +132,6 @@ public class Book {
         this.infoLink = infoLink;
         this.buyLink = buyLink;
         this.isInFavorites = isInFavorites;
+        this.category = category;
     }
 }
