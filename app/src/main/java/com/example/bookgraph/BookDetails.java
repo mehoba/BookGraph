@@ -110,20 +110,20 @@ public class BookDetails extends AppCompatActivity {
             FirebaseUser fireBaseUser = FirebaseAuth.getInstance().getCurrentUser();
             HashMap<String, Object> user = new HashMap<>();
             HashMap<String, Object> book = new HashMap<>();
-
-            user.put("uid",fireBaseUser.getUid());
-            user.put("title",title);
-            book.put("title",title);
-            Database.addBook(user,book);
-
-            boolean test=getIsSaved();
-            Log.d("TEST","test:"+test);
-            if(test){
-                isSavedTxt.setText("Is in your Favorites: Yes");
-                Toast.makeText(this, title + "saved to favorites", Toast.LENGTH_SHORT)
+            if(getIsSaved()){
+                Toast.makeText(this, "Book already in favorites", Toast.LENGTH_SHORT)
                         .show();
             }
-
+            else {
+                user.put("uid", fireBaseUser.getUid());
+                user.put("title", title);
+                book.put("title", title);
+                book.put("category", category);
+                Database.addBook(user, book);
+                Toast.makeText(this, "Book saved to favorites", Toast.LENGTH_SHORT)
+                        .show();
+                isSavedTxt.setText("In your Favorites: Yes");
+            }
         });
     }
 
@@ -133,26 +133,22 @@ public class BookDetails extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
        Task<QuerySnapshot> getFavorites= db.collection("usersFavorites")
                 .whereEqualTo("uid", uid)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    private static final String TAG = "Query";
+                .get();
 
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                String bookTitle=document.getString("title");
-                                Log.d(TAG, "Book Title "+bookTitle);
-                                if(bookTitle.equals(title)){
-                                   setAfterSave=true;
-                                }
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-        return setAfterSave;
+       while(!getFavorites.isComplete()){
+           try {
+               wait(100);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+       }
+
+        for (QueryDocumentSnapshot document : getFavorites.getResult()) {
+            String bookTitle=document.getString("title");
+            if(title.equals(bookTitle)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,34 +1,48 @@
 package com.example.bookgraph;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.anychart.anychart.DataEntry;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Favorites extends AppCompatActivity {
+
     static LinkedList<String> retVal = new LinkedList<>();
+    ArrayList<DataEntry> bookCategories;
     LinearLayout mainLL;
+    Button chartBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites2);
+        chartBtn = findViewById(R.id.chartBtn);
         mainLL = findViewById(R.id.myLayoutId);
         getIsSaved();
+
+
+        chartBtn.setOnClickListener(view -> {
+            Intent i = new Intent(Favorites.this, BookPieChart.class);
+            i.putExtra("data", bookCategories);
+            startActivity(i);
+        });
     }
 
     public synchronized void getIsSaved(){

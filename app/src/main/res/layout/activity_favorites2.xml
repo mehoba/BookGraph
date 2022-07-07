@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,8 +9,21 @@
     <LinearLayout
         android:id="@+id/myLayoutId"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="614dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/chartBtn"
+        android:layout_width="154dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginEnd="129dp"
+        android:text="Chart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myLayoutId" />
 </androidx.constraintlayout.widget.ConstraintLayout>
