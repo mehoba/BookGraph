@@ -31,7 +31,6 @@ public class BookPieChart extends AppCompatActivity {
 
         bookCategories = new ArrayList<>();
         ArrayList<String> categoriesReceived = getIntent().getStringArrayListExtra("data");
-        categoriesReceived.add("Computers");
         ArrayList<String> categoriesWithoutDuplicates = removeDuplicates(categoriesReceived);
 
         AnyChartView anyChartView = findViewById(R.id.any_chart_view);
@@ -49,13 +48,6 @@ public class BookPieChart extends AppCompatActivity {
             int numberOfBooks = Collections.frequency(categoriesReceived, bookCategory);
             bookCategories.add(new ValueDataEntry(bookCategory, numberOfBooks));
         }
-
-        List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry("Apples", 6371664));
-        data.add(new ValueDataEntry("Pears", 789622));
-        data.add(new ValueDataEntry("Bananas", 7216301));
-        data.add(new ValueDataEntry("Grapes", 1486621));
-        data.add(new ValueDataEntry("Oranges", 1200000));
 
         pie.setData(bookCategories);
         anyChartView.setChart(pie);

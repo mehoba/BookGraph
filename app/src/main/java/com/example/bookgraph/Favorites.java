@@ -66,8 +66,12 @@ public class Favorites extends AppCompatActivity {
         for (QueryDocumentSnapshot document : getFavorites.getResult()) {
             String bookTitle=document.getString("title");
             String bookCategory=document.getString("category");
-            if(isAlready(bookTitle)) {
+            if(!isInFavorites(bookTitle)) {
                 retVal.add(bookTitle);
+                if(bookCategory != null)
+                    bookCategories.add(bookCategory);
+            }
+            else {
                 if(bookCategory != null)
                     bookCategories.add(bookCategory);
             }
@@ -86,12 +90,12 @@ public class Favorites extends AppCompatActivity {
         }
     }
 
-    public boolean isAlready(String book){
+    public boolean isInFavorites(String book){
         for(String s:retVal){
             if(s.equals(book)){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }
