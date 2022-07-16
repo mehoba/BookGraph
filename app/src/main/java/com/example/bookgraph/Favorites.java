@@ -1,6 +1,7 @@
 package com.example.bookgraph;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +27,7 @@ import java.util.LinkedList;
 public class Favorites extends AppCompatActivity {
 
     static LinkedList<String> retVal = new LinkedList<>();
-    ArrayList<DataEntry> bookCategories;
+    ArrayList<String> bookCategories = new ArrayList<>();
     LinearLayout mainLL;
     Button chartBtn;
 
@@ -63,8 +65,11 @@ public class Favorites extends AppCompatActivity {
         }
         for (QueryDocumentSnapshot document : getFavorites.getResult()) {
             String bookTitle=document.getString("title");
-            if(isAlredy(bookTitle)) {
+            String bookCategory=document.getString("category");
+            if(isAlready(bookTitle)) {
                 retVal.add(bookTitle);
+                if(bookCategory != null)
+                    bookCategories.add(bookCategory);
             }
         }
 
@@ -81,7 +86,7 @@ public class Favorites extends AppCompatActivity {
         }
     }
 
-    public boolean isAlredy(String book){
+    public boolean isAlready(String book){
         for(String s:retVal){
             if(s.equals(book)){
                 return false;

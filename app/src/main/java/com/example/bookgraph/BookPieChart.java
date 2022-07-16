@@ -14,18 +14,25 @@ import com.anychart.anychart.chart.common.Event;
 import com.anychart.anychart.chart.common.ListenersInterface;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BookPieChart extends AppCompatActivity {
 
-    ArrayList<DataEntry> bookCategories;
+    List<DataEntry> bookCategories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_pie_chart);
 
+        bookCategories = new ArrayList<>();
         ArrayList<String> categoriesReceived = getIntent().getStringArrayListExtra("data");
+        categoriesReceived.add("Computers");
+        ArrayList<String> categoriesWithoutDuplicates = removeDuplicates(categoriesReceived);
 
         AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
@@ -38,6 +45,11 @@ public class BookPieChart extends AppCompatActivity {
             }
         });
 
+        for(String bookCategory : categoriesWithoutDuplicates){
+            int numberOfBooks = Collections.frequency(categoriesReceived, bookCategory);
+            bookCategories.add(new ValueDataEntry(bookCategory, numberOfBooks));
+        }
+
         List<DataEntry> data = new ArrayList<>();
         data.add(new ValueDataEntry("Apples", 6371664));
         data.add(new ValueDataEntry("Pears", 789622));
@@ -45,8 +57,15 @@ public class BookPieChart extends AppCompatActivity {
         data.add(new ValueDataEntry("Grapes", 1486621));
         data.add(new ValueDataEntry("Oranges", 1200000));
 
-        pie.setData(data);
+        pie.setData(bookCategories);
         anyChartView.setChart(pie);
 
+    }
+
+    public static ArrayList<String> removeDuplicates(ArrayList<String> categories) {
+
+        Set<String> setWithoutDuplicates = new LinkedHashSet<>(categories);
+
+        return new ArrayList<>(setWithoutDuplicates);
     }
 }

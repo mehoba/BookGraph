@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         favBtn.setOnClickListener(v -> {
-            Log.d("favBTN","...");
             Intent i = new Intent(MainActivity.this, Favorites.class);
             startActivity(i);
         });
