@@ -1,5 +1,7 @@
 package com.example.bookgraph;
 
+import static java.util.Objects.requireNonNull;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,10 +39,10 @@ public class BookDetails extends AppCompatActivity {
     String category;
     int pageCount;
 
-    TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, categoryTV, publishDateTV,isSavedTxt;
-    Button previewBtn, buyBtn,saveBtn;
+    TextView titleTV, subtitleTV, publisherTV, descTV, pageTV, categoryTV, publishDateTV, isSavedTxt;
+    Button previewBtn, buyBtn, saveBtn;
 
-    boolean setAfterSave=false;
+    boolean setAfterSave = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +73,8 @@ public class BookDetails extends AppCompatActivity {
         previewLink = getIntent().getStringExtra("previewLink");
         infoLink = getIntent().getStringExtra("infoLink");
         buyLink = getIntent().getStringExtra("buyLink");
-        isSaved=getIntent().getStringExtra("isInFavorites");
-        boolean parseBoolean=Boolean.parseBoolean(isSaved);
+        isSaved = getIntent().getStringExtra("isInFavorites");
+        boolean parseBoolean = Boolean.parseBoolean(isSaved);
 
         titleTV.setText(title);
         subtitleTV.setText(subtitle);
@@ -83,8 +85,11 @@ public class BookDetails extends AppCompatActivity {
         categoryTV.setText("Category : " + category);
         Picasso.get().load(thumbnail).into(bookIV);
 
-        if(parseBoolean){
-        isSavedTxt.setText("Is in your Favorites: Yes");}else { isSavedTxt.setText("Is in your Favorites: No");}
+        if (parseBoolean) {
+            isSavedTxt.setText("Is in your Favorites: Yes");
+        } else {
+            isSavedTxt.setText("Is in your Favorites: No");
+        }
         previewBtn.setOnClickListener(v -> {
             if (previewLink.isEmpty()) {
                 Toast.makeText(BookDetails.this, "No preview Link present", Toast.LENGTH_SHORT).show();
@@ -111,27 +116,30 @@ public class BookDetails extends AppCompatActivity {
             HashMap<String, Object> user = new HashMap<>();
             HashMap<String, Object> book = new HashMap<>();
 
-                user.put("uid",fireBaseUser.getUid());
-                user.put("title",title);
+            if(fireBaseUser!= null) {
+                user.put("uid", fireBaseUser.getUid());
+                user.put("title", title);
                 user.put("category", category);
-                book.put("title",title);
+                book.put("title", title);
                 book.put("category", category);
-                Database.addBook(user,book);
+                Database.addBook(user, book);
+            }
 
-                boolean test=getIsSaved();
-                Log.d("TEST","test:"+test);
-                if(test){
-                    isSavedTxt.setText("Is in your Favorites: Yes");
-                }
+            boolean isSavedInFavorites = getIsSaved();
 
-            });
-        }
+            if (isSavedInFavorites) {
+                isSavedTxt.setText("Is in your Favorites: Yes");
+            }
 
-        public boolean getIsSaved(){
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+        });
+    }
 
+    public boolean getIsSaved() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Task<QuerySnapshot> getFavorites= db.collection("usersFavorites")
+            db.collection("usersFavorites")
                     .whereEqualTo("uid", uid)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -141,9 +149,9 @@ public class BookDetails extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    String bookTitle=document.getString("title");
-                                    if(bookTitle.equals(title)){
-                                        setAfterSave=true;
+                                    String bookTitle = requireNonNull(document.getString("title"), "bookTitle");
+                                    if (bookTitle.equals(title)) {
+                                        setAfterSave = true;
                                     }
                                 }
                             } else {
@@ -153,4 +161,6 @@ public class BookDetails extends AppCompatActivity {
                     });
             return setAfterSave;
         }
+        return false;
     }
+}

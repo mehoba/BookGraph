@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private EditText searchEdt;
     private LinkedList<String> bookFavLinkedList;
-    private static final LinkedList<String> retVal=new LinkedList<>();
+    private static final LinkedList<String> retVal = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://www.googleapis.com/books/v1/volumes?q=" + query;
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         JsonObjectRequest booksObjrequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-            boolean isInFavoritesb=false;
+            boolean isInFavoritesb = false;
             progressBar.setVisibility(View.GONE);
             try {
                 JSONArray itemsArray = response.getJSONArray("items");
-                bookFavLinkedList=getIsSaved();
+                bookFavLinkedList = getIsSaved();
 
                 for (int i = 0; i < itemsArray.length(); i++) {
                     JSONObject itemsObj = itemsArray.getJSONObject(i);
@@ -89,11 +89,9 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray authorsArray = volumeObj.getJSONArray("authors");
 
                     String category;
-                    try{
-                     category = volumeObj.getJSONArray("categories").getString(0);
-                    }
-                    catch (Exception e)
-                    {
+                    try {
+                        category = volumeObj.getJSONArray("categories").getString(0);
+                    } catch (Exception e) {
                         category = "No category found";
                     }
                     String title = volumeObj.optString("title");
@@ -105,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     if (imageLinks != null) {
                         thumbnail = imageLinks.optString("thumbnail");
                         thumbnail = thumbnail.substring(0, 4) + 's' + thumbnail.substring(4);
-                    }
-                    else {
+                    } else {
                         thumbnail = "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png";
                     }
                     String previewLink = volumeObj.optString("previewLink");
@@ -124,17 +121,19 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    if(bookFavLinkedList.contains(title)) {
-                        Log.d("FoundFav", "Book Title "+title+" found in Favorite List");
+                    if (bookFavLinkedList.contains(title)) {
+                        Log.d("FoundFav", "Book Title " + title + " found in Favorite List");
                         Toast.makeText(this, "Book is already in favorites", Toast.LENGTH_SHORT)
                                 .show();
-                        isInFavoritesb=true;
+                        isInFavoritesb = true;
                     }
 
-                    String isInFavorites="false";
-                    if(isInFavoritesb){isInFavorites="true";}
-                    Book bookInfo = new Book(title, subtitle, authorsArrayList, publisher, publishedDate, description, pageCount, thumbnail, previewLink, infoLink, buyLink,isInFavorites, category);
-                    isInFavoritesb=false;
+                    String isInFavorites = "false";
+                    if (isInFavoritesb) {
+                        isInFavorites = "true";
+                    }
+                    Book bookInfo = new Book(title, subtitle, authorsArrayList, publisher, publishedDate, description, pageCount, thumbnail, previewLink, infoLink, buyLink, isInFavorites, category);
+                    isInFavoritesb = false;
 
                     bookInfoArrayList.add(bookInfo);
 
@@ -154,46 +153,36 @@ public class MainActivity extends AppCompatActivity {
         queue.add(booksObjrequest);
     }
 
-    public synchronized LinkedList<String> getIsSaved(){
+    public synchronized LinkedList<String> getIsSaved() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Task<QuerySnapshot> getFavorites= db.collection("usersFavorites")
-                .whereEqualTo("uid", uid)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    private static final String TAG = "Query";
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            db.collection("usersFavorites")
+                    .whereEqualTo("uid", uid)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        private static final String TAG = "Query";
 
-                    @Override
-                    public synchronized void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                String bookTitle=document.getString("title");
-
-                                while (bookTitle == null) {
-                                    try {
-                                        wait();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
+                        @Override
+                        public synchronized void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    String bookTitle = document.getString("title");
+                                    retVal.add(bookTitle);
                                 }
-
-                                Log.d(TAG, "Book Title "+bookTitle);
-                                retVal.add(bookTitle);
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
                             }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                    }
-                });
-
+                    });
+        }
         notifyAll();
-        if(retVal.size()==0){
+        if (retVal.size() == 0) {
             Log.d("retVal", "EMPTY");
         }
-        for(String s:retVal){
-            Log.d("retVal", "Book in Favorites: "+s);
+        for (String s : retVal) {
+            Log.d("retVal", "Book in Favorites: " + s);
         }
         return retVal;
     }

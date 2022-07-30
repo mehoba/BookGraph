@@ -3,119 +3,19 @@ package com.example.bookgraph;
 import java.util.ArrayList;
 
 public class Book {
-    private String title;
-    private String subtitle;
-    private ArrayList<String> authors;
-    private String publisher;
-    private String publishedDate;
-    private String description;
-    private int pageCount;
-    private String thumbnail;
-    private String previewLink;
-    private String infoLink;
-    private String buyLink;
-    private String isInFavorites;
-    private String category;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-    }
-
-    public ArrayList<String> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(ArrayList<String> authors) {
-        this.authors = authors;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public String getPublishedDate() {
-        return publishedDate;
-    }
-
-    public void setPublishedDate(String publishedDate) {
-        this.publishedDate = publishedDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getPageCount() {
-        return pageCount;
-    }
-
-    public void setPageCount(int pageCount) {
-        this.pageCount = pageCount;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public String getPreviewLink() {
-        return previewLink;
-    }
-
-    public void setPreviewLink(String previewLink) {
-        this.previewLink = previewLink;
-    }
-
-    public String getInfoLink() {
-        return infoLink;
-    }
-
-    public void setInfoLink(String infoLink) {
-        this.infoLink = infoLink;
-    }
-
-    public String getBuyLink() {
-        return buyLink;
-    }
-
-    public void setBuyLink(String buyLink) {
-        this.buyLink = buyLink;
-    }
-
-    public String getInFavorites() {
-        return isInFavorites;
-    }
-
-    public void setInFavorites(String inFavorites) {
-        isInFavorites = inFavorites;
-    }
-
-    public String getCategory() { return category; }
-
-    public void setCategory(String category) { this.category = category; }
+    private final String title;
+    private final String subtitle;
+    private final ArrayList<String> authors;
+    private final String publisher;
+    private final String publishedDate;
+    private final String description;
+    private final int pageCount;
+    private final String thumbnail;
+    private final String previewLink;
+    private final String infoLink;
+    private final String buyLink;
+    private final String isInFavorites;
+    private final String category;
 
     public Book(String title, String subtitle, ArrayList<String> authors, String publisher,
                 String publishedDate, String description, int pageCount, String thumbnail,
@@ -134,4 +34,54 @@ public class Book {
         this.isInFavorites = isInFavorites;
         this.category = category;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public ArrayList<String> getAuthors() {
+        return authors;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public String getPublishedDate() {
+        return publishedDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public String getPreviewLink() {
+        return previewLink;
+    }
+
+    public String getInfoLink() {
+        return infoLink;
+    }
+
+    public String getBuyLink() {
+        return buyLink;
+    }
+
+    public String getInFavorites() {
+        return isInFavorites;
+    }
+
+    public String getCategory() { return category; }
 }

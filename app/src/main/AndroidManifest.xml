@@ -18,9 +18,10 @@
         <activity
             android:name=".Favorites"
             android:exported="false" />
-        <activity android:name=".BookDetails" /> <!-- <activity android:name=".MainActivity" /> -->
+        <activity android:name=".BookDetails" />
+        <activity android:name=".MainActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

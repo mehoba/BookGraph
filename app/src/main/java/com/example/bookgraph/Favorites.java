@@ -1,20 +1,16 @@
 package com.example.bookgraph;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.anychart.anychart.DataEntry;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,7 +18,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class Favorites extends AppCompatActivity {
 
@@ -47,40 +45,40 @@ public class Favorites extends AppCompatActivity {
         });
     }
 
-    public synchronized void getIsSaved(){
+    public synchronized void getIsSaved() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, String> gatherAllBooksInFavorites = new HashMap<>();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Task<QuerySnapshot> getFavorites = db.collection("usersFavorites")
+                    .whereEqualTo("uid", uid)
+                    .get();
+            Toast.makeText(this, "Please wait while list loads", Toast.LENGTH_SHORT)
+                    .show();
+            while (!getFavorites.isComplete()) {
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            for (QueryDocumentSnapshot document : getFavorites.getResult()) {
+                String bookTitle = document.getString("title");
+                String bookCategory = document.getString("category");
 
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Task<QuerySnapshot> getFavorites= db.collection("usersFavorites")
-                .whereEqualTo("uid", uid)
-                .get();
-        Toast.makeText(this, "Please wait while list loads", Toast.LENGTH_SHORT)
-                .show();
-        while(!getFavorites.isComplete()){
-            try {
-                wait(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                if (!isInFavorites(bookTitle)) {
+                    retVal.add(bookTitle);
+                }
+                if (bookCategory != null) {
+                    gatherAllBooksInFavorites.put(bookTitle, bookCategory);
+                }
             }
         }
-        for (QueryDocumentSnapshot document : getFavorites.getResult()) {
-            String bookTitle=document.getString("title");
-            String bookCategory=document.getString("category");
-            if(!isInFavorites(bookTitle)) {
-                retVal.add(bookTitle);
-                if(bookCategory != null)
-                    bookCategories.add(bookCategory);
-            }
-            else {
-                if(bookCategory != null)
-                    bookCategories.add(bookCategory);
-            }
-        }
 
-        if(retVal.size()==0){
+        if (retVal.size() == 0) {
             Log.d("retVal", "EMPTY");
         }
-        for(String s:retVal){
+        for (String s : retVal) {
             TextView text = new TextView(this);
             text.setText(s);
             text.setTextSize(20);
@@ -88,14 +86,19 @@ public class Favorites extends AppCompatActivity {
             text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             mainLL.addView(text);
         }
+        setAllCategories(gatherAllBooksInFavorites);
     }
 
-    public boolean isInFavorites(String book){
-        for(String s:retVal){
-            if(s.equals(book)){
+    public boolean isInFavorites(String book) {
+        for (String s : retVal) {
+            if (s.equals(book)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void setAllCategories(Map<String, String> allBooks) {
+        allBooks.forEach((title, category) -> bookCategories.add(category));
     }
 }
